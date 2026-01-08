@@ -4,7 +4,7 @@ A full-stack MERN application that acts as an AI-powered virtual gym assistant w
 
 ## Tech Stack
 
-- **Frontend*: React.js + Vite + Tailwind CSS
+- **Frontend**: React.js + Vite + Tailwind CSS
 - **Backend**: Node.js + Express.js
 - **Database**: MongoDB with Mongoose
 - **Authentication**: JWT (Access + Refresh Tokens)
@@ -163,3 +163,4 @@ gymverse/
 ## License
 
 ISC
+
