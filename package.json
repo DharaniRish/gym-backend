@@ -8,12 +8,10 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": [
-    "gym",
-    "fitness",
-    "mern"
-  ],
-  "author": "",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["gym", "fitness", "mern"],
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
