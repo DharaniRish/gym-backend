@@ -250,8 +250,69 @@ export const createMembership = async (req, res) => {
   }
 };
 
+import MembershipPlan from '../models/MembershipPlan.js';
 
+// @desc    Get all membership plans
+// @route   GET /api/admin/plans
+// @access  Private (Admin)
+export const getMembershipPlans = async (req, res) => {
+  try {
+    const plans = await MembershipPlan.find().sort({ createdAt: -1 });
+    res.json(plans);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
+// @desc    Create a membership plan
+// @route   POST /api/admin/plans
+// @access  Private (Admin)
+export const createMembershipPlan = async (req, res) => {
+  try {
+    const { name, price, duration, features } = req.body;
+    if (!name || !price || !duration) {
+      return res.status(400).json({ message: 'Name, price, and duration are required.' });
+    }
+    const plan = await MembershipPlan.create({ name, price, duration, features: features || [], isActive: true });
+    res.status(201).json(plan);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
+// @desc    Update a membership plan
+// @route   PUT /api/admin/plans/:id
+// @access  Private (Admin)
+export const updateMembershipPlan = async (req, res) => {
+  try {
+    const plan = await MembershipPlan.findById(req.params.id);
+    if (!plan) return res.status(404).json({ message: 'Plan not found' });
+
+    const { name, price, duration, features, isActive } = req.body;
+    if (name !== undefined) plan.name = name;
+    if (price !== undefined) plan.price = price;
+    if (duration !== undefined) plan.duration = duration;
+    if (features !== undefined) plan.features = features;
+    if (isActive !== undefined) plan.isActive = isActive;
+
+    await plan.save();
+    res.json(plan);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Delete a membership plan
+// @route   DELETE /api/admin/plans/:id
+// @access  Private (Admin)
+export const deleteMembershipPlan = async (req, res) => {
+  try {
+    const plan = await MembershipPlan.findByIdAndDelete(req.params.id);
+    if (!plan) return res.status(404).json({ message: 'Plan not found' });
+    res.json({ message: 'Plan deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 

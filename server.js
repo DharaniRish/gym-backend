@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 
 import connectDB from './src/config/database.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
+import seedAdmin from './src/scripts/seedAdmin.js';
 
 // Routes
 import authRoutes from './src/routes/authRoutes.js';
@@ -22,8 +23,11 @@ import gamificationRoutes from './src/routes/gamificationRoutes.js';
 import exerciseRoutes from './src/routes/exerciseRoutes.js';
 import paymentRoutes from './src/routes/paymentRoutes.js';
 
-// 🔗 Connect to MongoDB
-connectDB();
+// 🔗 Connect to MongoDB then seed default admin
+(async () => {
+  await connectDB();
+  await seedAdmin();
+})();
 
 // Seed default membership plan
 import MembershipPlan from './src/models/MembershipPlan.js';
@@ -61,7 +65,7 @@ const allowedOrigins = [
   'http://localhost:3001',
   'http://localhost:5173',
   'https://elegant-taiyaki-3a2f3c.netlify.app',
-  'https://fitnessapplicationfrogym.netlify.app',
+  'https://gym-fe-zeta.vercel.app',
 ];
 
 app.use(

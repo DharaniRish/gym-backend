@@ -7,6 +7,10 @@ import {
   getDashboardStats,
   getTrainers,
   createMembership,
+  getMembershipPlans,
+  createMembershipPlan,
+  updateMembershipPlan,
+  deleteMembershipPlan,
 } from '../controllers/adminController.js';
 import { protect } from '../middleware/auth.js';
 import { authorize } from '../middleware/roleCheck.js';
@@ -23,6 +27,12 @@ router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 router.get('/trainers', getTrainers);
 router.post('/memberships', createMembership);
+
+// Plan Management
+router.get('/plans', getMembershipPlans);
+router.post('/plans', createMembershipPlan);
+router.put('/plans/:id', updateMembershipPlan);
+router.delete('/plans/:id', deleteMembershipPlan);
 
 export default router;
 
