@@ -64,7 +64,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:5173',
-  'https://elegant-taiyaki-3a2f3c.netlify.app',
+  'https://gymwebsite-fe.vercel.app',
   'https://gym-fe-zeta.vercel.app',
 ];
 
