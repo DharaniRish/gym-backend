@@ -222,7 +222,9 @@ const calculateMacros = (goal, weight, height, age, gender = 'male') => {
 
 export const generateDietPlan = (goal, preference, budget, weight, height, age, gender = 'male', duration = 7) => {
   const macros = calculateMacros(goal, weight, height, age, gender);
-  const meals = mealDatabase[goal]?.[preference]?.[budget];
+  const goalKey = mealDatabase[goal] ? goal : (goal === 'muscle_gain' || goal === 'strength' ? 'muscle_gain' : 'fat_loss');
+  const preferenceKey = preference === 'vegan' ? 'vegetarian' : preference;
+  const meals = mealDatabase[goalKey]?.[preferenceKey]?.[budget] || mealDatabase[goalKey]?.[preferenceKey]?.medium;
 
   if (!meals) {
     throw new Error('Invalid diet parameters');
@@ -237,10 +239,10 @@ export const generateDietPlan = (goal, preference, budget, weight, height, age, 
 
     const dailyMeal = {
       date,
-      breakfast: meals.breakfast[day % meals.breakfast.length],
-      lunch: meals.lunch[day % meals.lunch.length],
-      dinner: meals.dinner[day % meals.dinner.length],
-      snacks: meals.snacks.slice(0, 2), // 2 snacks per day
+      breakfast: { ...meals.breakfast[day % meals.breakfast.length], minutes: 15 },
+      lunch: { ...meals.lunch[day % meals.lunch.length], minutes: 25 },
+      dinner: { ...meals.dinner[day % meals.dinner.length], minutes: 30 },
+      snacks: meals.snacks.slice(0, 2).map(snack => ({ ...snack, minutes: 10 })),
       totalCalories: 0,
       totalProtein: 0,
       totalCarbs: 0,

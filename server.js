@@ -25,8 +25,10 @@ import paymentRoutes from './src/routes/paymentRoutes.js';
 
 // 🔗 Connect to MongoDB then seed default admin
 (async () => {
-  await connectDB();
-  await seedAdmin();
+  const db = await connectDB();
+  if (db) {
+    await seedAdmin();
+  }
 })();
 
 // Seed default membership plan
@@ -34,6 +36,10 @@ import MembershipPlan from './src/models/MembershipPlan.js';
 
 (async () => {
   try {
+    if (!globalThis.__GYMVERSE_DB_READY__) {
+      return;
+    }
+
     const count = await MembershipPlan.countDocuments();
     if (count === 0) {
       await MembershipPlan.create({

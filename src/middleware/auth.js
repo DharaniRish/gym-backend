@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+const ACCESS_SECRET = process.env.JWT_SECRET || 'gymverse-local-access-secret';
+
 export const protect = async (req, res, next) => {
   try {
     let token;
@@ -17,7 +19,7 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, no token' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET);
     req.user = await User.findById(decoded.userId).select('-password');
 
     if (!req.user) {

@@ -17,6 +17,7 @@ const connectDB = async () => {
   for (const uri of candidates) {
     try {
       const conn = await mongoose.connect(uri, { dbName: process.env.DB_NAME });
+      globalThis.__GYMVERSE_DB_READY__ = true;
       console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
       return conn;
     } catch (error) {
@@ -40,6 +41,7 @@ const connectDB = async () => {
   if (process.env.NODE_ENV === 'production') {
     process.exit(1);
   }
+  globalThis.__GYMVERSE_DB_READY__ = false;
   return null;
 };
 

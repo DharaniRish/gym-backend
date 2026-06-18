@@ -1,12 +1,22 @@
 import User from '../models/User.js';
+import mongoose from 'mongoose';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 
-// ✅ REGISTER
+const isDatabaseConnected = () => mongoose.connection.readyState === 1;
+
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        message: 'Database is not connected. Please start MongoDB or set MONGO_URI in Gym-BE/.env.',
+      });
+    }
 
-    if (!name || !email || !password) {
+    const { name, email, password, role } = req.body;
+    const normalizedName = name?.trim();
+    const normalizedEmail = email?.trim().toLowerCase();
+
+    if (!normalizedName || !normalizedEmail || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -14,14 +24,17 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
 
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(409).json({
+        code: 'USER_EXISTS',
+        message: 'This email is already registered. Please sign in instead.',
+      });
     }
 
     const user = await User.create({
-      name,
-      email,
+      name: normalizedName,
+      email: normalizedEmail,
       password,
       role: role || 'member',
     });
@@ -42,17 +55,30 @@ export const register = async (req, res) => {
       accessToken,
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({
+        code: 'USER_EXISTS',
+        message: 'This email is already registered. Please sign in instead.',
+      });
+    }
+
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// ✅ LOGIN
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        message: 'Database is not connected. Please start MongoDB or set MONGO_URI in Gym-BE/.env.',
+      });
+    }
 
-    const user = await User.findOne({ email }).select('+password');
+    const { email, password } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
