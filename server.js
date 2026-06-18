@@ -132,6 +132,10 @@ app.use('/api/gamification', gamificationRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/payments', paymentRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Gym Backend API Running Successfully');
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
